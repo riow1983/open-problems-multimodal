@@ -21,7 +21,7 @@ eps: 1.0e-6
 betas:
 - 0.9
 - 0.999
-batch_size: 2
+batch_size: 1
 fc_dropout: 0.2
 weight_decay: 0.01
 gradient_accumulation_steps: 1
@@ -32,8 +32,6 @@ trn_fold:
 - 0
 - 1
 - 2
-- 3
-- 4
 train: true
 num_tasks: 140
 num_features: 22050
