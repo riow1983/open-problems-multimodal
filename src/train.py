@@ -52,6 +52,8 @@ class CFG:
         self.n_fold = cfg['n_fold']
         self.trn_fold = cfg['trn_fold']
         self.train = cfg['train']
+        self.num_tasks = cfg['num_tasks']
+        self.num_features = cfg['num_features']
     
         if self.debug:
             self.epochs = 2
