@@ -76,6 +76,7 @@ from pathlib import Path
 
 KAGGLE_ENV = True if 'KAGGLE_URL_BASE' in set(os.environ.keys()) else False
 
+print('google.colab' in sys.modules)
 if KAGGLE_ENV:
     BASE_DIR = Path('/kaggle/working')
 elif "google.colab" in sys.modules:
@@ -85,9 +86,12 @@ elif "google.colab" in sys.modules:
     WANDB_PATH = Path("/content/drive/MyDrive/colab_notebooks/kaggle/wandb.json")
     LINE_PATH = Path("/content/drive/MyDrive/colab_notebooks/kaggle/line.json")
 else:
-    BASE_DIR = Path("/home/jovyan/kaggle")
-    WANDB_PATH = Path("/home/jovyan/kaggle/wandb.json")
-    LINE_PATH = Path("/home/jovyan/kaggle/line.json")
+    # BASE_DIR = Path("/home/jovyan/kaggle")
+    # WANDB_PATH = Path("/home/jovyan/kaggle/wandb.json")
+    # LINE_PATH = Path("/home/jovyan/kaggle/line.json")
+    BASE_DIR = Path(f"/content/drive/MyDrive/colab_notebooks/kaggle/{args.comp_name}")
+    WANDB_PATH = Path("/content/drive/MyDrive/colab_notebooks/kaggle/wandb.json")
+    LINE_PATH = Path("/content/drive/MyDrive/colab_notebooks/kaggle/line.json")
 
 
 INPUT_DIR = BASE_DIR / 'input'
