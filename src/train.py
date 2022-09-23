@@ -322,7 +322,7 @@ def get_score(y_true, y_pred):
     return score
 
 
-def get_logger(filename=OUTPUT_DIR+'train'):
+def get_logger(filename=OUTPUT_DIR / 'train'):
     from logging import getLogger, INFO, StreamHandler, FileHandler, Formatter
     logger = getLogger(__name__)
     logger.setLevel(INFO)
