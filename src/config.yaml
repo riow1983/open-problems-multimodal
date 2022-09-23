@@ -14,10 +14,10 @@ batch_scheduler: true
 num_cycles: 0.5
 num_warmup_steps: 0
 epochs: 5
-encoder_lr: 2e-5
-decoder_lr: 2e-5
-min_lr: 1e-6
-eps: 1e-6
+encoder_lr: 2.0e-5
+decoder_lr: 2.0e-5
+min_lr: 1.0e-6
+eps: 1.0e-6
 betas:
 - 0.9
 - 0.999
