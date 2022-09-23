@@ -1,6 +1,7 @@
 debug: true
 comp_name: open-problems-multimodal
 nb_name: localsrc001-multi-task
+kagglenb_name: kagglenb001
 wandb: true
 type: cite # multi
 exp: exp001
