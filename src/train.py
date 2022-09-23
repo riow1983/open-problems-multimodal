@@ -21,7 +21,7 @@ class CFG:
         self.comp_name = cfg['comp_name']
         self.nb_name = cfg['nb_name']
         self.type = cfg['type']
-        self.dname = f'kaggle001-{cfg["type"]}-cv'
+        self.dname = f'{cfg["kagglenb_name"]}-{cfg["type"]}-cv'
         self.cv_x = f'X_{cfg["type"]}_fold.h5'
         self.cv_y = f'Y_{cfg["type"]}_fold.h5'
         self.wandb = cfg['wandb']
