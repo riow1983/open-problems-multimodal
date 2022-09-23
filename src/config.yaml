@@ -21,7 +21,7 @@ eps: 1.0e-6
 betas:
 - 0.9
 - 0.999
-batch_size: 1
+batch_size: 2
 fc_dropout: 0.2
 weight_decay: 0.01
 gradient_accumulation_steps: 1
