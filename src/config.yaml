@@ -1,4 +1,4 @@
-debug: false
+debug: true
 comp_name: open-problems-multimodal
 nb_name: localsrc001-multi-task
 wandb: true
