@@ -21,11 +21,12 @@
 
 
 class MultipleRegression(nn.Module):
-    def __init__(self, num_features, num_tasks):
+    def __init__(self, args):
         super(MultipleRegression, self).__init__()
-        self.num_tasks = num_tasks
+        self.num_tasks = args.num_tasks
+        self.num_features = args.num_features
 
-        self.layer_1 = nn.Linear(CFG.num_features, 2000)
+        self.layer_1 = nn.Linear(self.num_features, 2000)
         self.layer_2 = nn.Linear(2000, 200)
         self.layer_3 = nn.Linear(200, 100)
         self.layer_4 = nn.Linear(100, 50)

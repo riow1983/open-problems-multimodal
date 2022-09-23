@@ -1,10 +1,10 @@
-class CiteSeqDataset(Dataset):
-    def __init__(self, X_data, y_data):
-        self.X_data = X_data
-        self.y_data = y_data
+class TrainDataset(Dataset):
+    def __init__(self, X_data_fold, y_data_fold):
+        self.X_data = X_data_fold
+        self.y_data = y_data_fold
 
-    def __getitem__(self, index):
-        return self.X_data[index], self.y_data[index]
+    def __getitem__(self, item):
+        return self.X_data[item], self.y_data[item]
 
     def __len__(self):
         return len(self.X_data)

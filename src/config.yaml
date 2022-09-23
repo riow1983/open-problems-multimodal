@@ -2,7 +2,8 @@ debug: false
 comp_name: open-problems-multimodal
 nb_name: localsrc001-multi-task
 wandb: true
-wandbname: exp001
+type: cite # multi
+exp: exp001
 _wandb_kernel: riow1983
 apex: true
 print_freq: 100
@@ -25,7 +26,7 @@ weight_decay: 0.01
 gradient_accumulation_steps: 1
 max_grad_norm: 1000
 seed: 42
-n_fold: 5
+n_fold: 3
 trn_fold:
 - 0
 - 1
@@ -33,3 +34,5 @@ trn_fold:
 - 3
 - 4
 train: true
+num_tasks: 144
+num_features: 20856

@@ -150,6 +150,7 @@ print(cffi.__version__)
 <br>
 
 ```bash
+# Google Drive path
 cd /Volumes/GoogleDrive/My\ Drive/colab_notebooks/kaggle/open-problems-multimodal/
 ```
 <br>
@@ -164,6 +165,9 @@ cd /Volumes/GoogleDrive/My\ Drive/colab_notebooks/kaggle/open-problems-multimoda
 #### Blogs (Medium / Qiita / Others)
 |name|url|status|comment|
 |----|----|----|----|
+|Python の super() 関数の使い方|[URL](https://www.lifewithpython.com/2014/01/python-super-function.html)|Read|super()の引数にクラス名を渡すのはPython2の記法.|
+|【Mac】SSHログイン中に「client_loop: send disconnect: Broken pipe」でフリーズ・ログアウトする事象の解決方法|[URL](https://genchan.net/it/pc/mac/11402/)|Read|効果無し.|
+|YAML Tutorial Quick Start: A Simple File|[URL](https://www.cloudbees.com/blog/yaml-tutorial-everything-you-need-get-started)|Read|YAMLファイルの記法;参考になる.|
 <br>
 
 
@@ -175,6 +179,7 @@ cd /Volumes/GoogleDrive/My\ Drive/colab_notebooks/kaggle/open-problems-multimoda
 #### BBC (StackOverflow / StackExchange / Quora / Reddit / Others)
 |name|url|status|comment|
 |----|----|----|----|
+|How can I parse a YAML file in Python|[URL](https://stackoverflow.com/questions/1773805/how-can-i-parse-a-yaml-file-in-python)|Read|YAMLファイルの読み方;参考になる.|
 <br>
 
 #### GitHub
@@ -212,14 +217,14 @@ cd /Volumes/GoogleDrive/My\ Drive/colab_notebooks/kaggle/open-problems-multimoda
 ***
 ## Diary
 
-#### 2022-08-17
-コンペ用レポジトリ作成.<br>
+#### 2022--
+<br>
 <br>
 <br>
 
-#### 2022-08-24
+#### 2022--
 結果はxxx/xxx (暫定) だった. <br>
-![private lb image](https://github.com/riow1983/us-patent-phrase-to-phrase-matching/blob/main/png/result.png)
+![private lb image](https://github.com/riow1983/open-problems-multimodal/blob/main/png/result.png)
 <br>
 <br>
 **どのように取り組み, 何を反省しているか**<br>
@@ -228,7 +233,7 @@ cd /Volumes/GoogleDrive/My\ Drive/colab_notebooks/kaggle/open-problems-multimoda
 <br>
 <br>
 <br>
-Back to [Top](#amex-default-prediction)
+Back to [Top](#open-problems-multimodal)
 
 
 
