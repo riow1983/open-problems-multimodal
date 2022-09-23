@@ -1,3 +1,5 @@
+from torch.utils.data import Dataset
+
 class TrainDataset(Dataset):
     def __init__(self, X_data_fold, y_data_fold):
         self.X_data = X_data_fold

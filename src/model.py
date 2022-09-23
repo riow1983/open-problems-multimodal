@@ -1,3 +1,6 @@
+import torch
+import torch.nn as nn
+
 # class MultiTaskModel(nn.Module):
 #     """
 #     Creates a MTL model with the encoder from "arch" and with dropout multiplier ps.
