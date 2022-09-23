@@ -8,7 +8,7 @@ exp: exp001
 _wandb_kernel: riow1983
 apex: true
 print_freq: 100
-num_workers: 4
+num_workers: 8
 scheduler: cosine # ['linear', 'cosine']
 batch_scheduler: true
 num_cycles: 0.5
@@ -21,7 +21,7 @@ eps: 1.0e-6
 betas:
 - 0.9
 - 0.999
-batch_size: 12
+batch_size: 2
 fc_dropout: 0.2
 weight_decay: 0.01
 gradient_accumulation_steps: 1
