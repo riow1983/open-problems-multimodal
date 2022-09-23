@@ -1,3 +1,6 @@
+import torch
+import torch.nn as nn
+
 class NegativeCorrLoss(nn.Module):
     """Negative correlation loss function for PyTorch
     Credit to https://www.kaggle.com/code/ambrosm/msci-citeseq-keras-quickstart/comments#1926321
