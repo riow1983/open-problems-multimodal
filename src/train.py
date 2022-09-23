@@ -579,7 +579,8 @@ def train_loop(X_folds, Y_folds, fold):
     # model & optimizer
     # ====================================================
     model = MultipleRegression(args)
-    torch.save(model.config, OUTPUT_DIR / 'config.pth')
+    # torch.save(model.config, OUTPUT_DIR / 'config.pth')
+    torch.save(model.state_dict(), OUTPUT_DIR / 'model.pth')
     model.to(device)
     
     def get_optimizer_params(model, encoder_lr, decoder_lr, weight_decay=0.0):
