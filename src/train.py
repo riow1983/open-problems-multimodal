@@ -571,7 +571,7 @@ def train_loop(X_folds, Y_folds, fold):
     train_loader = DataLoader(train_dataset,
                               batch_size=args.batch_size,
                               shuffle=True,
-                              num_workers=args.num_workers, pin_memory=True, drop_last=False)
+                              num_workers=args.num_workers, pin_memory=True, drop_last=True)
     valid_loader = DataLoader(valid_dataset,
                               batch_size=args.batch_size,
                               shuffle=False,
