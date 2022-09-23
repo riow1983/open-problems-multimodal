@@ -75,8 +75,7 @@ import os
 from pathlib import Path
 
 KAGGLE_ENV = True if 'KAGGLE_URL_BASE' in set(os.environ.keys()) else False
-
-print('google.colab' in sys.modules)
+#print(os.getcwd())
 if KAGGLE_ENV:
     BASE_DIR = Path('/kaggle/working')
 elif "google.colab" in sys.modules:
@@ -357,14 +356,14 @@ seed_everything(seed=args.seed)
 # Data Loading
 # ====================================================
 
-FP_CELL_METADATA = INPUT_DIR / "metadata.csv"
+FP_CELL_METADATA = INPUT_DIR / f"{args.comp_name}/metadata.csv"
 
-FP_TRAIN_INPUTS = INPUT_DIR / f"train_{args.type}_inputs.h5"
-FP_TRAIN_TARGETS = INPUT_DIR / f"train_{args.type}_targets.h5"
-FP_TEST_INPUTS = INPUT_DIR / f"test_{args.type}_inputs.h5"
+FP_TRAIN_INPUTS = INPUT_DIR / f"{args.comp_name}/train_{args.type}_inputs.h5"
+FP_TRAIN_TARGETS = INPUT_DIR / f"{args.comp_name}/train_{args.type}_targets.h5"
+FP_TEST_INPUTS = INPUT_DIR / f"{args.comp_name}/test_{args.type}_inputs.h5"
 
-FP_SUBMISSION = INPUT_DIR / "sample_submission.csv"
-FP_EVALUATION_IDS = INPUT_DIR / "evaluation_ids.csv"
+FP_SUBMISSION = INPUT_DIR / f"{args.comp_name}/sample_submission.csv"
+FP_EVALUATION_IDS = INPUT_DIR / f"{args.comp_name}/evaluation_ids.csv"
 
 train = pd.read_hdf(FP_TRAIN_INPUTS)
 
