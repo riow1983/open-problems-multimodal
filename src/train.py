@@ -21,6 +21,7 @@ class CFG:
         self.comp_name = cfg['comp_name']
         self.nb_name = cfg['nb_name']
         self.type = cfg['type']
+        self.model = self.nb_name + '-' + self.type
         self.dname = f'{cfg["kagglenb_name"]}-{cfg["type"]}-cv'
         self.cv_x = f'X_{cfg["type"]}_fold.h5'
         self.cv_y = f'Y_{cfg["type"]}_fold.h5'
@@ -57,7 +58,7 @@ class CFG:
     
         if self.debug:
             self.epochs = 2
-            self.trn_fold = [0]
+            #self.trn_fold = [0]
             self.wandbname = "debug-" + self.wandbname
 
 
@@ -207,6 +208,8 @@ def correlation_score(y_true, y_pred):
     Returns the average of each sample's Pearson correlation coefficient"""
     if type(y_true) == pd.DataFrame: y_true = y_true.values
     if type(y_pred) == pd.DataFrame: y_pred = y_pred.values
+    print(y_true.shape)
+    print(y_pred.shape)
     corrsum = 0
     for i in range(len(y_true)):
         corrsum += np.corrcoef(y_true[i], y_pred[i])[1, 0]
@@ -369,10 +372,8 @@ FP_TEST_INPUTS = INPUT_DIR / f"{args.comp_name}/test_{args.type}_inputs.h5"
 FP_SUBMISSION = INPUT_DIR / f"{args.comp_name}/sample_submission.csv"
 FP_EVALUATION_IDS = INPUT_DIR / f"{args.comp_name}/evaluation_ids.csv"
 
-train = pd.read_hdf(FP_TRAIN_INPUTS)
-
-
-print(f"train.shape: {train.shape}")
+# train = pd.read_hdf(FP_TRAIN_INPUTS)
+# print(f"train.shape: {train.shape}")
 #display(train.head())
 
 
@@ -391,14 +392,16 @@ print(f"train.shape: {train.shape}")
 #     train.loc[val_index, 'fold'] = int(n)
 # train['fold'] = train['fold'].astype(int)
 #display(train.groupby('fold').size())
-X_train = pd.read_hdf(INPUT_DIR / args.dname / args.cv_x)
-Y_train = pd.read_hdf(INPUT_DIR / args.dname / args.cv_y)
+folds = pd.read_hdf(INPUT_DIR / args.dname / args.cv_x)
+# Y_train = pd.read_hdf(INPUT_DIR / args.dname / args.cv_y)
 
 if args.debug:
     #display(train.groupby('fold').size())
-    if len(train) > 2000:
-        train = train.sample(n=2000, random_state=0).reset_index(drop=True)
+    if len(folds) > 2000:
+        folds = folds.sample(n=2000, random_state=0).reset_index(drop=True)
+        # Y_train = Y_train.sample(n=2000, random_state=0).reset_index(drop=True)
         #display(train.groupby('fold').size())
+        gc.collect()
 
 
 
@@ -517,6 +520,7 @@ def valid_fn(valid_loader, model, criterion, device):
             loss = loss / args.gradient_accumulation_steps
         losses.update(loss.item(), batch_size)
         # preds.append(y_preds.sigmoid().to('cpu').numpy())
+        # print('y_preds.shape: ', y_preds.shape)
         preds.append(y_preds.to('cpu').numpy())
         end = time.time()
         if step % args.print_freq == 0 or step == (len(valid_loader)-1):
@@ -526,7 +530,9 @@ def valid_fn(valid_loader, model, criterion, device):
                   .format(step, len(valid_loader),
                           loss=losses,
                           remain=timeSince(start, float(step+1)/len(valid_loader))))
+        # print('len(preds): ', len(preds))
     predictions = np.concatenate(preds)
+    # print('predictions.shape: ', predictions.shape)
     return losses.avg, predictions
 
 
@@ -549,24 +555,25 @@ def inference_fn(test_loader, model, device):
 # ====================================================
 # train loop
 # ====================================================
-def train_loop(X_folds, Y_folds, fold):
+def train_loop(folds, fold):
     
     LOGGER.info(f"========== fold: {fold} training ==========")
 
     # ====================================================
     # loader
     # ====================================================
-    # train_folds = folds[folds['fold'] != fold].reset_index(drop=True)
-    # valid_folds = folds[folds['fold'] == fold].reset_index(drop=True)
-    X_train_folds = X_folds[X_folds['fold'] != fold].reset_index(drop=True)
-    Y_train_folds = Y_folds[Y_folds['fold'] != fold].reset_index(drop=True)
-    X_valid_folds = X_folds[X_folds['fold'] == fold].reset_index(drop=True)
-    Y_valid_folds = Y_folds[Y_folds['fold'] == fold].reset_index(drop=True)
+    train_folds = folds[folds['fold'] != fold].reset_index(drop=True)
+    valid_folds = folds[folds['fold'] == fold].reset_index(drop=True)
+    print('valid_folds.shape: ', valid_folds.shape)
+    # Y_train_folds = Y_folds[Y_folds['fold'] != fold].reset_index(drop=True)
+    # Y_valid_folds = Y_folds[Y_folds['fold'] == fold].reset_index(drop=True)
+
     # valid_texts = valid_folds['pn_history'].values
     # valid_labels = create_labels_for_scoring(valid_folds)
     
-    train_dataset = TrainDataset(X_train_folds, Y_train_folds)
-    valid_dataset = TrainDataset(X_valid_folds, Y_valid_folds)
+
+    train_dataset = TrainDataset(train_folds)
+    valid_dataset = TrainDataset(valid_folds)
 
     train_loader = DataLoader(train_dataset,
                               batch_size=args.batch_size,
@@ -619,7 +626,7 @@ def train_loop(X_folds, Y_folds, fold):
             )
         return scheduler
     
-    num_train_steps = int(len(Y_train_folds) / args.batch_size * args.epochs)
+    num_train_steps = int(len(train_folds) / args.batch_size * args.epochs)
     scheduler = get_scheduler(args, optimizer, num_train_steps)
 
     # ====================================================
@@ -646,7 +653,7 @@ def train_loop(X_folds, Y_folds, fold):
         # results = get_results(char_probs, th=0.5)
         # preds = get_predictions(results)
         # score = get_score(valid_labels, preds)
-        score = get_score(Y_valid_folds, preds)
+        score = get_score(valid_folds.iloc[:, -140:].values, predictions)
 
         elapsed = time.time() - start_time
 
@@ -691,28 +698,28 @@ if __name__ == '__main__':
     #     if cv_score:
     #         wandb.log({f'CV score': score})
 
-    def get_result(oof_df, Y, cv_score=False):
+    def get_result(oof_df, folds):
         # labels = create_labels_for_scoring(oof_df)
-        labels = Y.values[:, :-1]
+        labels = folds.iloc[:, -140:].values
         predictions = oof_df.values
         score = get_score(labels, predictions)
-
         LOGGER.info(f'Score: {score:<.4f}')
-        if cv_score:
-            wandb.log({f'CV score': score})
     
     if args.train:
         oof_df = pd.DataFrame()
         for fold in range(args.n_fold):
             if fold in args.trn_fold:
-                _oof_df = train_loop(X_train, Y_train, fold)
+                print('fold!!!!!!!!!!!!!!!!!', fold)
+                _oof_df = train_loop(folds, fold)
+                print('_oof_df.shape just after train_loop(): ', _oof_df.shape)
                 oof_df = pd.concat([oof_df, _oof_df])
                 LOGGER.info(f"========== fold: {fold} result ==========")
-                get_result(_oof_df, Y_train)
+                #get_result(_oof_df, folds)
         oof_df = oof_df.reset_index(drop=True)
         LOGGER.info(f"========== CV ==========")
-
-        get_result(oof_df, Y_train, cv_score=True)
+        print('oof_df.shape just before get_result(): ', oof_df.shape)
+        print('folds.shape just before get_result(): ', folds.shape)
+        get_result(oof_df, folds)
         oof_df.to_pickle(OUTPUT_DIR / 'oof_df.pkl')
         
     if args.wandb:

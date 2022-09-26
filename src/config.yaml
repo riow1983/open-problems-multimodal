@@ -1,4 +1,4 @@
-debug: true
+debug: false
 comp_name: open-problems-multimodal
 nb_name: localsrc001-multi-task
 kagglenb_name: kagglenb001
@@ -21,7 +21,7 @@ eps: 1.0e-6
 betas:
 - 0.9
 - 0.999
-batch_size: 2
+batch_size: 12
 fc_dropout: 0.2
 weight_decay: 0.01
 gradient_accumulation_steps: 1
@@ -34,4 +34,4 @@ trn_fold:
 - 2
 train: true
 num_tasks: 140
-num_features: 22050
+num_features: 20856 #22050 -> 20856
