@@ -10,16 +10,17 @@ https://www.kaggle.com/competitions/open-problems-multimodal<br>
 <br>
 <br>
 ***
+
 ## 実験管理テーブル
 https://wandb.ai/riow1983/amex-default-prediction?workspace=user-riow1983
 |commitSHA|comment|W&B|Local CV|Public LB|Private LB|
-|----|----|----|----|
+|----|----|----|----|----|----|
 |e335712825487cde604ce1d8c8490c6b8aa7575b|[Submit] cite-exp001|[URL](https://wandb.ai/riow1983/open-problems-multimodal/runs/wd1t294h/overview?workspace=user-riow1983)|0.7453(cite);?(multi)|0.793|?|
 <br>
 
 ## Late Submissions
-|commitSHA|comment|Local CV|Public LB|Private LB|
-|----|----|----|----|----|
+|commitSHA|comment|W&B|Local CV|Public LB|Private LB|
+|----|----|----|----|----|----|
 <br>
 
 
