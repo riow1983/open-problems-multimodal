@@ -20,13 +20,15 @@ else:
 
 
 INPUT_DIR = BASE_DIR / 'input'
-!mkdir {INPUT_DIR}
+# !mkdir {INPUT_DIR}
+os.makedirs(INPUT_DIR, exist_ok=True)
 
 if KAGGLE_ENV:
     OUTPUT_DIR = Path('')
 else:
     OUTPUT_DIR = INPUT_DIR / nb_name
-    !mkdir {OUTPUT_DIR}
+    # !mkdir {OUTPUT_DIR}
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
 
