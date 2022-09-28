@@ -2,7 +2,7 @@ debug: false
 comp_name: open-problems-multimodal
 nb_name: localsrc001-multi-task
 kagglenb_name: kagglenb001
-wandb: true
+wandb: false
 type: cite # multi
 exp: exp001
 _wandb_kernel: riow1983
@@ -32,6 +32,6 @@ trn_fold:
 - 0
 - 1
 - 2
-train: true
+train: false
 num_tasks: 140
 num_features: 20856 #22050 -> 20856

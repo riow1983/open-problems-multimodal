@@ -18,3 +18,15 @@ class TrainDataset(Dataset):
         labels = torch.tensor(self.Y_data[item], dtype=torch.float)
         return inputs, labels
 
+
+class TestDataset(Dataset):
+    def __init__(self, data):
+        self.X_data = data.values.astype(np.float32) # -141 is column 'fold'
+
+    def __len__(self):
+        return len(self.X_data)
+    
+    def __getitem__(self, item):
+        inputs = torch.tensor(self.X_data[item], dtype=torch.float)
+        return inputs
+
