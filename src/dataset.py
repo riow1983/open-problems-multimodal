@@ -1,10 +1,32 @@
-class CiteSeqDataset(Dataset):
-    def __init__(self, X_data, y_data):
-        self.X_data = X_data
-        self.y_data = y_data
+import torch
+from torch.utils.data import Dataset
+import numpy as np
 
-    def __getitem__(self, index):
-        return self.X_data[index], self.y_data[index]
+class TrainDataset(Dataset):
+    def __init__(self, data_fold):
+        # print(data_fold.loc[data_fold['ENSG00000121410_A1BG']=='911991c08e7a', :5])
+        # print(data_fold.iloc[:5, :5])
+        # print(data_fold.shape)
+        self.X_data = data_fold.iloc[:, :-141].values.astype(np.float32) # -141 is column 'fold'
+        self.Y_data = data_fold.iloc[:, -140:].values.astype(np.float32)
 
     def __len__(self):
         return len(self.X_data)
+    
+    def __getitem__(self, item):
+        inputs = torch.tensor(self.X_data[item], dtype=torch.float)
+        labels = torch.tensor(self.Y_data[item], dtype=torch.float)
+        return inputs, labels
+
+
+class TestDataset(Dataset):
+    def __init__(self, data):
+        self.X_data = data.values.astype(np.float32) # -141 is column 'fold'
+
+    def __len__(self):
+        return len(self.X_data)
+    
+    def __getitem__(self, item):
+        inputs = torch.tensor(self.X_data[item], dtype=torch.float)
+        return inputs
+

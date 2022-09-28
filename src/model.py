@@ -1,3 +1,7 @@
+import torch
+import torch.nn as nn
+import numpy as np
+
 # class MultiTaskModel(nn.Module):
 #     """
 #     Creates a MTL model with the encoder from "arch" and with dropout multiplier ps.
@@ -21,15 +25,17 @@
 
 
 class MultipleRegression(nn.Module):
-    def __init__(self, num_features, num_tasks):
+    def __init__(self, args):
         super(MultipleRegression, self).__init__()
-        self.num_tasks = num_tasks
+        self.num_tasks = args.num_tasks
+        self.num_features = args.num_features
 
-        self.layer_1 = nn.Linear(CFG.num_features, 2000)
+        self.layer_1 = nn.Linear(self.num_features, 2000)
         self.layer_2 = nn.Linear(2000, 200)
         self.layer_3 = nn.Linear(200, 100)
         self.layer_4 = nn.Linear(100, 50)
-        self.layer_out = nn.Linear(50, 1)
+        # self.layer_out = nn.Linear(50, 1)
+        self.layer_out = nn.Linear(50, self.num_tasks)
 
         self.relu = nn.ReLU()
 
@@ -39,8 +45,10 @@ class MultipleRegression(nn.Module):
         x = self.relu(self.layer_3(x))
         x = self.relu(self.layer_4(x))
 
-        outs = []
-        for task in range(self.num_tasks):
-            outs.append(self.layer_out(x))
+        # outs = []
+        # for task in range(self.num_tasks):
+        #     outs.append(self.layer_out(x))
 
-        return outs
+        # return np.array(outs)
+        x = self.layer_out(x)
+        return x

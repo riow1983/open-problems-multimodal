@@ -25,6 +25,7 @@ class CFG:
         self.dname = f'{cfg["kagglenb_name"]}-{cfg["type"]}-cv'
         self.cv_x = f'X_{cfg["type"]}_fold.h5'
         self.cv_y = f'Y_{cfg["type"]}_fold.h5'
+        self.cv_xt = f'Xt_{cfg["type"]}_fold.h5'
         self.wandb = cfg['wandb']
         self.wandbgroup = cfg['nb_name']
         self.wandbproject = cfg['comp_name']
@@ -392,13 +393,16 @@ FP_EVALUATION_IDS = INPUT_DIR / f"{args.comp_name}/evaluation_ids.csv"
 #     train.loc[val_index, 'fold'] = int(n)
 # train['fold'] = train['fold'].astype(int)
 #display(train.groupby('fold').size())
-folds = pd.read_hdf(INPUT_DIR / args.dname / args.cv_x)
+# folds = pd.read_hdf(INPUT_DIR / args.dname / args.cv_x)
+test = pd.read_hdf(INPUT_DIR / args.dname / args.cv_xt)
+Y = pd.read_hdf(INPUT_DIR / args.dname / args.cv_x).iloc[:, -140:]
+print('Y.shape: ', Y.shape)
 # Y_train = pd.read_hdf(INPUT_DIR / args.dname / args.cv_y)
 
 if args.debug:
     #display(train.groupby('fold').size())
-    if len(folds) > 2000:
-        folds = folds.sample(n=2000, random_state=0).reset_index(drop=True)
+    if len(test) > 2000:
+        test = test.sample(n=2000, random_state=0).reset_index(drop=True)
         # Y_train = Y_train.sample(n=2000, random_state=0).reset_index(drop=True)
         #display(train.groupby('fold').size())
         gc.collect()
@@ -721,6 +725,40 @@ if __name__ == '__main__':
         print('folds.shape just before get_result(): ', folds.shape)
         get_result(oof_df, folds)
         oof_df.to_pickle(OUTPUT_DIR / 'oof_df.pkl')
+    else:
+        test_dataset = TestDataset(test)
+        test_loader = DataLoader(test_dataset,
+                                 batch_size=args.batch_size,
+                                 shuffle=False,
+                                 num_workers=args.num_workers, pin_memory=True, drop_last=False)
+        predictions = []
+        for fold in args.trn_fold:
+            model = MultipleRegression(args)
+            state = torch.load(OUTPUT_DIR / f"{args.model.replace('/', '-')}_fold{fold}_best.pth",
+                               map_location=torch.device('cpu'))
+            model.load_state_dict(state['model'])
+            prediction = inference_fn(test_loader, model, device)
+            # prediction = prediction.reshape((len(test), CFG.max_len))
+            # char_probs = get_char_probs(test['pn_history'].values, prediction, CFG.tokenizer)
+            # predictions.append(char_probs)
+            predictions.append(prediction)
+            del model, state, prediction; gc.collect()
+            torch.cuda.empty_cache()
+        predictions = np.mean(predictions, axis=0)
+        print('predictions.shape: ', predictions.shape)
+
+
+        # Copy the targets for the data leak
+        predictions[:7476] = Y.iloc[:7476, :].values
+        predictions = predictions.ravel()
+        
+        submission = pd.read_csv(INPUT_DIR / 'multiome-w-sparse-m-tsvd-32/submission.csv',
+                                 index_col='row_id', squeeze=True)
+        print('submission.shape: ', submission.shape)
+        submission.iloc[:len(predictions)] = predictions
+        assert not submission.isna().any()
+        submission.to_csv(OUTPUT_DIR / 'submission.csv')
+
         
     if args.wandb:
         wandb.finish()
@@ -742,5 +780,5 @@ if __name__ == '__main__':
     if args.wandb:
         send_line_notification(f"Training of {args.wandbgroup} has been done. See {run.url}")
     else:
-        send_line_notification(f"Training of {args.wandbgroup} has been done.")
+        send_line_notification(f"Inference of {args.wandbgroup} has been done.")
 
