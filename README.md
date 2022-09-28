@@ -1,11 +1,11 @@
 # open-problems-multimodal
 
-![header](https://github.com/riow1983/amex-default-prediction/blob/main/png/header.png)<br>
-https://www.kaggle.com/competitions/amex-default-prediction<br>
+![header](https://github.com/riow1983/open-problems-multimodal/blob/main/png/header.png)<br>
+https://www.kaggle.com/competitions/open-problems-multimodal<br>
 どんなコンペ?:<br>
 開催期間:<br>
-![timeline](https://github.com/riow1983/amex-default-prediction/blob/main/png/timeline.png)<br>
-[結果](#2022-08-24)<br>  
+![timeline](https://github.com/riow1983/open-problems-multimodal/blob/main/png/timeline.png)<br>
+[結果](#2022-11-15)<br>  
 <br>
 <br>
 <br>
@@ -223,7 +223,7 @@ cd /Volumes/GoogleDrive/My\ Drive/colab_notebooks/kaggle/open-problems-multimoda
 <br>
 <br>
 
-#### 2022--
+#### 2022-11-15
 結果はxxx/xxx (暫定) だった. <br>
 ![private lb image](https://github.com/riow1983/open-problems-multimodal/blob/main/png/result.png)
 <br>
