@@ -15,7 +15,7 @@ elif "google.colab" in sys.modules:
     drive.mount("/content/drive")
     BASE_DIR = Path(f"/content/drive/MyDrive/colab_notebooks/kaggle/{comp_name}")
 else:
-    BASE_DIR = Path(f"/home/jovyan/kaggle/{comp_name}")
+    BASE_DIR = Path("/home/jovyan/kaggle")
 
 
 
