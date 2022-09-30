@@ -5,6 +5,7 @@ https://www.kaggle.com/competitions/open-problems-multimodal<br>
 どんなコンペ?:<br>
 開催期間:<br>
 ![timeline](https://github.com/riow1983/open-problems-multimodal/blob/main/png/timeline.png)<br>
+[Saturn Cloud](https://app.community.saturnenterprise.io/dash/o/community/resources/jupyterServer/91adbd53412f4b1ab6375b986f71e2c5/)<br>
 [結果](#2022-11-15)<br>  
 <br>
 <br>
@@ -219,7 +220,21 @@ cd /Volumes/GoogleDrive/My\ Drive/colab_notebooks/kaggle/open-problems-multimoda
 ***
 ## Diary
 
-#### 2022--
+#### 2022-9-30
+According to [this notebook](https://www.kaggle.com/code/takanashihumbert/there-are-35-features-in-multiome-data-constant-0/notebook), constant columns in multiome train are:
+```python
+const_cols_train = set(['chr10:41857982-41858833', 'chr10:41879051-41879911', 'chr11:1946784-1947675', 'chr13:65965314-65966055', 'chr21:21146641-21147535', 'chr2:174378385-174378803', 'chr3:56842415-56843062', 'chr4:131727166-131728039', 'chr9:117692728-117693552', 'chr9:35269996-35270417'])
+```
+while constant columns in multiome test are:
+```python
+const_cols_test = set(['chr10:79753665-79753951', 'chr11:115700218-115700585', 'chr11:29329177-29329459', 'chr11:42407098-42407984', 'chr12:126509499-126510333', 'chr14:32622946-32623255', 'chr16:87733202-87733436', 'chr1:4058887-4059409', 'chr20:59565631-59566004', 'chr2:102597677-102597978', 'chr2:89307028-89307866', 'chr3:11677056-11677358', 'chr3:55631693-55632564', 'chr3:8336689-8336899', 'chr3:98231236-98231837', 'chr4:122370131-122370487', 'chr4:123042897-123043148', 'chr4:144557386-144557968', 'chr5:13477356-13477709', 'chr5:87204838-87205174', 'chr5:877133-877370', 'chr6:148829090-148829417', 'chr6:167115297-167115502', 'chr7:102606719-102606960', 'chr7:52501818-52502338'])
+```
+And the intersection of the two has none:
+```python
+print(const_cols_train.intersection(const_cols_test))
+# set()
+```
+This means there is no column that can be dropped because of its consistency across train and test in multiome, which is opposite to cite where many columns have been dropped because of their consistency acress train and test.
 <br>
 <br>
 <br>
