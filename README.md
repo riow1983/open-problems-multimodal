@@ -234,7 +234,7 @@ And the intersection of the two has none:
 print(const_cols_train.intersection(const_cols_test))
 # set()
 ```
-This means there is no column that can be dropped because of its consistency across train and test in multiome, which is opposite to cite where many columns have been dropped because of their consistency acress train and test.
+This means there is no column that can be dropped because of its consistency across train and test in multiome, which is opposite to the case of cite where many columns have been dropped because of their consistency across train and test.
 <br>
 <br>
 <br>
