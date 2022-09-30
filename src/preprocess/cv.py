@@ -68,24 +68,41 @@ elif dtype == 'multiome':
 else:
     raise ValueError('dtype must be "cite" or "multiome"')
 
+print('Now here!!!!!!!!!!!! (1)')
 X = pd.read_hdf(PATH_TO_X)
-len_X = len(X)
-Xt = pd.read_hdf(PATH_TO_XT)
-cols_full = set(Xt.columns())
+# len_X = len(X)
+# Xt = pd.read_hdf(PATH_TO_XT)
+print('Now here!!!!!!!!!!!! (2)')
+cols_full = Xt.columns
 len_Xt = len(Xt)
 XXt = pd.concat([X, Xt], axis=0).reset_index(drop=True)
 del X, Xt; gc.collect()
 print('XXt.shape before dropping columns: ', XXt.shape)
 assert len(XXt) == len_X + len_Xt
+print('Now here!!!!!!!!!!!! (3)')
 
+
+def dd(df):
+    cols = df.columns()
+    isconsts = []
+    for col in cols:
+        if np.var(df[col]) == 0.0:
+            isconsts.append(True)
+        else:
+            isconsts.append(False)
+    
+        
 
 # Detect and drop constant columns
-XXt = XXt.loc[:, (XXt != XXt.iloc[0]).any()]
-gc.collect()
-print('XXt.shape after dropping columns: ', XXt.shape)
-cols_remained = set(XXt.columns())
+# XXt = XXt.loc[:, (XXt != XXt.iloc[0]).any()]
+# gc.collect()
+# print('XXt.shape after dropping columns: ', XXt.shape)
+# cols_remained = set(XXt.columns())
+cols_remained = cols_full[(XXt != XXt.iloc[0]).any()]
 
-print('Columns dropped: ¥n¥n', cols_full - cols_remained)
+cols_dropped = set(cols_full) - set(cols_remained)
+print('¥n¥n¥nNumber of columns dropped: ', len(cols_dropped))
+print('¥n¥n¥nColumns dropped: ¥n¥n', cols_dropped)
 
 # X = XXt.iloc[:len_X, :]
 # Xt = XXt.iloc[len_X:, :]
