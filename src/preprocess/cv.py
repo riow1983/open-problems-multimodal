@@ -1,6 +1,9 @@
 comp_name = "open-problems-multimodal"
 dtype = 'multiome'
 nb_name = f'localsrc002-{dtype}-cv'
+col_sample = None
+row_sample = 1000
+    
 
 import sys
 import os
@@ -34,6 +37,10 @@ else:
 
 import pandas as pd
 import gc
+import h5py
+import hdf5plugin
+import numpy as np
+from datareader import *
 
 # DATA_DIR = "/home/jovyan/kaggle/input/open-problems-multimodal/"
 DATA_DIR = INPUT_DIR / comp_name
@@ -68,28 +75,61 @@ elif dtype == 'multiome':
 else:
     raise ValueError('dtype must be "cite" or "multiome"')
 
+
+
+
 print('Now here!!!!!!!!!!!! (1)')
-X = pd.read_hdf(PATH_TO_X)
-# len_X = len(X)
-# Xt = pd.read_hdf(PATH_TO_XT)
+drx = DataReader(data_dir = PATH_TO_X.parent,
+                 filename = PATH_TO_X.name,
+                 metadata_file_name = 'metadata.csv')
+X = drx.query_data(col_sample = col_sample, row_sample = row_sample)
+del drx; gc.collect()
+# iterX = pd.read_hdf(PATH_TO_X, iterator=True, chunksize=16_780)
+# print('type of PATH_TO_X: ', type(PATH_TO_X))
+# print(PATH_TO_X.name)
+# f = h5py.File(PATH_TO_X, 'r')
+# print(list(f.keys()))
+# print(PATH_TO_X.name.split('.')[0])
+# print(list(f[PATH_TO_X.name.split('.')[0]].keys()))
+# X = f[PATH_TO_X.name.split('.')[0]]['block0_values']
+# # X = hf.get(PATH_TO_X.name.split('.')[0]).value
+# # X = X[:]
+# X = np.array(X)
+print(type(X))
+print(X.shape)
+# print(X)
+len_X = len(X)
+
+
+drxt = DataReader(data_dir = PATH_TO_XT.parent,
+                  filename = PATH_TO_XT.name,
+                  metadata_file_name = 'metadata.csv')
+Xt = drxt.query_data(col_sample = col_sample, row_sample = row_sample) 
+del drxt; gc.collect()
+# # Xt = pd.read_hdf(PATH_TO_XT)
+# f = h5py.File(PATH_TO_XT, 'r')
+# Xt = f[PATH_TO_XT.name.split('.')[0]]['block0_values']
+# Xt = np.array(Xt)
+print(type(Xt))
+print(Xt.shape)
+# print(Xt)
 print('Now here!!!!!!!!!!!! (2)')
-cols_full = Xt.columns
+# cols_full = Xt.columns
 len_Xt = len(Xt)
-XXt = pd.concat([X, Xt], axis=0).reset_index(drop=True)
+# XXt = pd.concat([X, Xt], axis=0).reset_index(drop=True)
+XXt = np.concatenate([X, Xt], axis=0)
+print(XXt.shape)
+print(XXt)
+# for X in iterX:
+#     print('X.shape before dropping columns: ', X.shape)
+#     XXt = pd.merge(X, Xt, on='cell_id', how='inner')
+#     print('XXt.shape before dropping columns: ', XXt.shape)
 del X, Xt; gc.collect()
-print('XXt.shape before dropping columns: ', XXt.shape)
 assert len(XXt) == len_X + len_Xt
 print('Now here!!!!!!!!!!!! (3)')
 
 
-def dd(df):
-    cols = df.columns()
-    isconsts = []
-    for col in cols:
-        if np.var(df[col]) == 0.0:
-            isconsts.append(True)
-        else:
-            isconsts.append(False)
+
     
         
 
@@ -98,11 +138,11 @@ def dd(df):
 # gc.collect()
 # print('XXt.shape after dropping columns: ', XXt.shape)
 # cols_remained = set(XXt.columns())
-cols_remained = cols_full[(XXt != XXt.iloc[0]).any()]
+# cols_remained = cols_full[(XXt != XXt.iloc[0]).any()]
 
-cols_dropped = set(cols_full) - set(cols_remained)
-print('¥n¥n¥nNumber of columns dropped: ', len(cols_dropped))
-print('¥n¥n¥nColumns dropped: ¥n¥n', cols_dropped)
+# cols_dropped = set(cols_full) - set(cols_remained)
+# print('¥n¥n¥nNumber of columns dropped: ', len(cols_dropped))
+# print('¥n¥n¥nColumns dropped: ¥n¥n', cols_dropped)
 
 # X = XXt.iloc[:len_X, :]
 # Xt = XXt.iloc[len_X:, :]
