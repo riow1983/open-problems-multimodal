@@ -3,6 +3,9 @@ dtype = 'multiome'
 nb_name = f'localsrc002-{dtype}-cv'
 col_sample = None
 row_sample = 1000
+N_SPLITS = 3
+import numpy as np
+np.random.seed(42)
     
 
 import sys
@@ -23,14 +26,12 @@ else:
 
 
 INPUT_DIR = BASE_DIR / 'input'
-# !mkdir {INPUT_DIR}
 os.makedirs(INPUT_DIR, exist_ok=True)
 
 if KAGGLE_ENV:
     OUTPUT_DIR = Path('')
 else:
     OUTPUT_DIR = INPUT_DIR / nb_name
-    # !mkdir {OUTPUT_DIR}
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
@@ -39,99 +40,72 @@ import pandas as pd
 import gc
 import h5py
 import hdf5plugin
-import numpy as np
+from sklearn.model_selection import GroupKFold
 from datareader import *
 
-# DATA_DIR = "/home/jovyan/kaggle/input/open-problems-multimodal/"
+if "google.colab" in sys.modules:
+    python_version = 7
+elif KAGGLE_ENV:
+    python_version = 7
+else:
+    python_version = 10
+if not os.path.exists(f'/opt/conda/lib/python3.{str(python_version)}/site-packages/tables'):
+    os.system('pip install --quiet tables')
+
 DATA_DIR = INPUT_DIR / comp_name
-# FP_CELL_METADATA = os.path.join(DATA_DIR,"metadata.csv")
 FP_CELL_METADATA = DATA_DIR / "metadata.csv"
-
-# FP_CITE_TRAIN_INPUTS = os.path.join(DATA_DIR,"train_cite_inputs.h5")
 FP_CITE_TRAIN_INPUTS = DATA_DIR / "train_cite_inputs.h5"
-# FP_CITE_TRAIN_TARGETS = os.path.join(DATA_DIR,"train_cite_targets.h5")
 FP_CITE_TRAIN_TARGETS = DATA_DIR / "train_cite_targets.h5"
-# FP_CITE_TEST_INPUTS = os.path.join(DATA_DIR,"test_cite_inputs.h5")
 FP_CITE_TEST_INPUTS = DATA_DIR / "test_cite_inputs.h5"
-
-# FP_MULTIOME_TRAIN_INPUTS = os.path.join(DATA_DIR,"train_multi_inputs.h5")
 FP_MULTIOME_TRAIN_INPUTS = DATA_DIR / "train_multi_inputs.h5"
-# FP_MULTIOME_TRAIN_TARGETS = os.path.join(DATA_DIR,"train_multi_targets.h5")
 FP_MULTIOME_TRAIN_TARGETS = DATA_DIR / "train_multi_targets.h5"
-# FP_MULTIOME_TEST_INPUTS = os.path.join(DATA_DIR,"test_multi_inputs.h5")
 FP_MULTIOME_TEST_INPUTS = DATA_DIR / "test_multi_inputs.h5"
-
-# FP_SUBMISSION = os.path.join(DATA_DIR,"sample_submission.csv")
 FP_SUBMISSION = DATA_DIR / "sample_submission.csv"
-# FP_EVALUATION_IDS = os.path.join(DATA_DIR,"evaluation_ids.csv")
 FP_EVALUATION_IDS = DATA_DIR / "evaluation_ids.csv"
 
 if dtype == 'cite':
     PATH_TO_X = FP_CITE_TRAIN_INPUTS
     PATH_TO_XT = FP_CITE_TEST_INPUTS
+    PATH_TO_Y = FP_CITE_TRAIN_TARGETS 
 elif dtype == 'multiome':
     PATH_TO_X = FP_MULTIOME_TRAIN_INPUTS
     PATH_TO_XT = FP_MULTIOME_TEST_INPUTS
+    PATH_TO_Y = FP_MULTIOME_TRAIN_TARGETS
 else:
     raise ValueError('dtype must be "cite" or "multiome"')
 
 
+print(
+'''
+##################################################
+#             Read Sampled Data                  #
+##################################################
+'''
+)
 
-
-print('Now here!!!!!!!!!!!! (1)')
+# X
 drx = DataReader(data_dir = PATH_TO_X.parent,
                  filename = PATH_TO_X.name,
                  metadata_file_name = 'metadata.csv')
-X = drx.query_data(col_sample = col_sample, row_sample = row_sample)
+X, row_sample_idx = drx.query_data(col_sample = col_sample, row_sample = row_sample)
 del drx; gc.collect()
-# iterX = pd.read_hdf(PATH_TO_X, iterator=True, chunksize=16_780)
-# print('type of PATH_TO_X: ', type(PATH_TO_X))
-# print(PATH_TO_X.name)
-# f = h5py.File(PATH_TO_X, 'r')
-# print(list(f.keys()))
-# print(PATH_TO_X.name.split('.')[0])
-# print(list(f[PATH_TO_X.name.split('.')[0]].keys()))
-# X = f[PATH_TO_X.name.split('.')[0]]['block0_values']
-# # X = hf.get(PATH_TO_X.name.split('.')[0]).value
-# # X = X[:]
-# X = np.array(X)
-print(type(X))
-print(X.shape)
-# print(X)
-len_X = len(X)
+# len_X = len(X)
 
 
+# Xt
 drxt = DataReader(data_dir = PATH_TO_XT.parent,
                   filename = PATH_TO_XT.name,
                   metadata_file_name = 'metadata.csv')
-Xt = drxt.query_data(col_sample = col_sample, row_sample = row_sample) 
-del drxt; gc.collect()
-# # Xt = pd.read_hdf(PATH_TO_XT)
-# f = h5py.File(PATH_TO_XT, 'r')
-# Xt = f[PATH_TO_XT.name.split('.')[0]]['block0_values']
-# Xt = np.array(Xt)
-print(type(Xt))
-print(Xt.shape)
-# print(Xt)
-print('Now here!!!!!!!!!!!! (2)')
-# cols_full = Xt.columns
-len_Xt = len(Xt)
-# XXt = pd.concat([X, Xt], axis=0).reset_index(drop=True)
-XXt = np.concatenate([X, Xt], axis=0)
-print(XXt.shape)
-print(XXt)
-# for X in iterX:
-#     print('X.shape before dropping columns: ', X.shape)
-#     XXt = pd.merge(X, Xt, on='cell_id', how='inner')
-#     print('XXt.shape before dropping columns: ', XXt.shape)
-del X, Xt; gc.collect()
-assert len(XXt) == len_X + len_Xt
-print('Now here!!!!!!!!!!!! (3)')
+Xt, _ = drxt.query_data(col_sample = col_sample, row_sample = row_sample) 
+del drxt, _; gc.collect()
+# len_Xt = len(Xt)
 
 
+# # XXt (= X ; Xt)
+# XXt = np.concatenate([X, Xt], axis=0)
+# del X, Xt; gc.collect()
+# assert len(XXt) == len_X + len_Xt
 
-    
-        
 
 # Detect and drop constant columns
 # XXt = XXt.loc[:, (XXt != XXt.iloc[0]).any()]
@@ -150,4 +124,54 @@ print('Now here!!!!!!!!!!!! (3)')
 # X.to_hdf(OUTPUT_DIR / 'X_multi.h5', key='X')
 # Xt.to_hdf(OUTPUT_DIR / 'Xt_multi.h5', key='Xt')
 
-# CV
+
+
+print('''
+##################################################
+#                      CV                        #
+##################################################
+''')
+
+metadata_df = pd.read_csv(FP_CELL_METADATA, index_col='cell_id')
+metadata_df = metadata_df[metadata_df.technology==dtype]
+
+cell_index = Xt.index
+meta = metadata_df.reindex(cell_index)
+
+
+# Read Y
+Y = pd.read_hdf(PATH_TO_Y)
+print(Y.shape)
+Y = Y.iloc[row_sample_idx, :]
+print(Y.shape)
+y_columns = list(Y.columns)
+Y = Y.values
+
+# Normalize the targets row-wise: This doesn't change the correlations,
+# and negative_correlation_loss depends on it
+Y -= Y.mean(axis=1).reshape(-1, 1)
+Y /= Y.std(axis=1).reshape(-1, 1)
+
+
+# Cross-validation
+kf = GroupKFold(n_splits=N_SPLITS)
+X.reset_index(inplace=True)
+Y = pd.DataFrame(Y)
+X['fold'] = -1
+X = pd.concat([X, Y], axis=1)
+del Y; gc.collect()
+
+for n, (train_index, val_index) in enumerate(kf.split(X, groups=meta.donor)):
+    X.loc[val_index, 'fold'] = int(n)
+X['fold'] = X['fold'].astype(int)
+X.set_index('cell_id', inplace=True)
+del metadata_df, meta, cell_index; gc.collect()
+
+
+print('''
+##################################################
+#               Export Datasets                  #
+##################################################
+''')
+X.to_hdf(OUTPUT_DIR / f'X_{dtype}_rs{row_sample}_fold.h5', key='X')
+Xt.to_hdf(OUTPUT_DIR / f'Xt_{dtype}_rs{row_sample}_fold.h5', key='Xt')

@@ -167,4 +167,4 @@ class DataReader:
         
         f.close()
 
-        return out
+        return out, row_sample_idx
