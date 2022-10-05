@@ -3,6 +3,36 @@
 ![header](https://github.com/riow1983/open-problems-multimodal/blob/main/png/header.png)<br>
 https://www.kaggle.com/competitions/open-problems-multimodal<br>
 どんなコンペ?:<br>
+```
+[コンペ名称]
+Open Problems – Multimodal Single-Cell Integration
+Predict how DNA, RNA & protein measurements co-vary in single cells
+
+[URL]
+https://www.kaggle.com/competitions/open-problems-multimodal
+
+[コンペ概要]
+シングル細胞分析と呼ばれる問題で, 細胞ごとに:
+- アッセイA: 与えられたDNA情報から遺伝子発現を
+- アッセイB：与えられた遺伝子発現からタンパク質レベルを
+それぞれ時系列的に予測する. 精度はピアソン相関係数で計測される.
+
+[コンペ開催期間]
+2022-08-15 – 2022-11-15
+
+[希望参加期間 (コンペ終了後の振り返り期間含む)]
+2022-10-04 – 2022-11-30
+
+[参加希望者]
+
+[どのような経験が得られるか]
+本コンペはオーミクス解析の一分野であり, データは列数が膨大な高カーディナリティデータであり扱いやすいとはいえない. 参加により当分野のドメイン知識習得およびデータ分析実務の経験を積むことができる.
+
+[ビジネスにどう活かせるか]
+LS分野のRWD分析にはバイオインフォマティクスの一分野としてオーミクス解析も含まれるため, 当分野における提案力が強化される.
+```
+<br>
+
 開催期間:<br>
 ![timeline](https://github.com/riow1983/open-problems-multimodal/blob/main/png/timeline.png)<br>
 [Saturn Cloud](https://app.community.saturnenterprise.io/dash/o/community/resources/jupyterServer/91adbd53412f4b1ab6375b986f71e2c5/)<br>
