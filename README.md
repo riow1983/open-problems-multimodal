@@ -269,6 +269,13 @@ This means there is no column that can be dropped because of its consistency acr
 <br>
 <br>
 
+#### 2022-10-05
+https://github.com/riow1983/open-problems-multimodal/commit/4156478a89c602a3ba5940e68ba46ca58da98ea1
+にてMultiomeのevaluationに含まれるcell_idを確認. (ちなみにサンプリング率は約10%だった.)
+<br>
+<br>
+<br>
+
 #### 2022-11-15
 結果はxxx/xxx (暫定) だった. <br>
 ![private lb image](https://github.com/riow1983/open-problems-multimodal/blob/main/png/result.png)
