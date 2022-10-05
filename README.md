@@ -270,8 +270,7 @@ This means there is no column that can be dropped because of its consistency acr
 <br>
 
 #### 2022-10-05
-https://github.com/riow1983/open-problems-multimodal/commit/4156478a89c602a3ba5940e68ba46ca58da98ea1
-にてMultiomeのevaluationに含まれるcell_idを確認. (ちなみにサンプリング率は約10%だった.)
+[Notebook](https://github.com/riow1983/open-problems-multimodal/blob/main/notebooks/eda-to-see-the-sampling-result-of-multiome.ipynb)にてMultiomeのevaluationに含まれるcell_idを確認. (ちなみにサンプリング率は約10%だった.)
 <br>
 <br>
 <br>
