@@ -188,31 +188,57 @@ cd /Volumes/GoogleDrive/My\ Drive/colab_notebooks/kaggle/open-problems-multimoda
 ```
 <br>
 
+```python
+# How to get only the last part of a path in Python?
+# https://stackoverflow.com/questions/3925096/how-to-get-only-the-last-part-of-a-path-in-python
+>>> from pathlib import Path
+>>> your_path = Path("/folderA/folderB/folderC/folderD/file.txt")
+>>> your_path.name
+'file.txt'
+>>> your_path.parent
+'folderD'
+```
+<br>
+
 
 #### Papers
 |name|url|status|comment|
 |----|----|----|----|
+|End-to-End Multi-Task Learning with Attention|[URL](https://arxiv.org/pdf/1803.10704v2.pdf)|Keep|[実装](https://github.com/lorenmt/mtan)|
+|Multi-task learning for single-cell multi-modality biology|[URL](https://www.biorxiv.org/content/10.1101/2022.06.03.494730v1.full)|Keep|-|
+|Computational challenges of cell cycle analysis using single cell
+transcriptomics|[URL](https://arxiv.org/pdf/2208.05229.pdf)|Keep|scRNA-seqに関する各タスクと既存ツールの限界について|
 <br>
 
 
 #### Blogs (Medium / Qiita / Others)
 |name|url|status|comment|
 |----|----|----|----|
+|About multimodal single-cell data|[URL](https://openproblems.bio/neurips_docs/data/about_multimodal/)|Read|コンペホストによる記事.|
 |Python の super() 関数の使い方|[URL](https://www.lifewithpython.com/2014/01/python-super-function.html)|Read|super()の引数にクラス名を渡すのはPython2の記法.|
 |【Mac】SSHログイン中に「client_loop: send disconnect: Broken pipe」でフリーズ・ログアウトする事象の解決方法|[URL](https://genchan.net/it/pc/mac/11402/)|Read|効果無し.|
 |YAML Tutorial Quick Start: A Simple File|[URL](https://www.cloudbees.com/blog/yaml-tutorial-everything-you-need-get-started)|Read|YAMLファイルの記法;参考になる.|
+|Pytorch [Tabular] — Regression|[URL](https://towardsdatascience.com/pytorch-tabular-regression-428e9c9ac93)|Read|PyTorchによる回帰モデルの作成例|
+|PytorchでDataFrameのデータをNNで訓練できる形に整形する|[URL](https://qiita.com/poorko/items/74fbf08c29378e26c5ae)|Read|データ型の部分参考.|
+|h5pyとnumpyの使い方|[URL](https://qiita.com/sakaia/items/95f1fc27312ff8038801)|Read|-|
+|意外と奥が深い、HDFの世界（Python・h5py入門）|[URL](https://qiita.com/simonritchie/items/23db8b4cb5c590924d95)|Keep|TLDR;|
 <br>
 
 
 #### Documentation (incl. Tutorial)
 |name|url|status|comment|
 |----|----|----|----|
+|MIA: Multimodal single-cell data, open benchmarks, and a NeurIPS 2021 competition|[URL](https://youtu.be/ZXDILOyiy7A)|Watching|コンペホストによるYouTube動画.<br>議論中心.|
 <br>
 
 #### BBC (StackOverflow / StackExchange / Quora / Reddit / Others)
 |name|url|status|comment|
 |----|----|----|----|
-|How can I parse a YAML file in Python|[URL](https://stackoverflow.com/questions/1773805/how-can-i-parse-a-yaml-file-in-python)|Read|YAMLファイルの読み方;参考になる.|
+|How can I parse a YAML file in Python|[URL](https://stackoverflow.com/questions/1773805/how-can-i-parse-a-yaml-file-in-python)|Read|yamlファイルの読み方;参考になる.|
+|pandas dataframe remove constant column|[URL](https://stackoverflow.com/questions/20209600/pandas-dataframe-remove-constant-column)|Read|全行同一値のカラムの除去方法|
+|YAML loads 5e-6 as string and not a number|[URL](https://stackoverflow.com/questions/30458977/yaml-loads-5e-6-as-string-and-not-a-number)|Read|yamlファイルでは例えば1e-1ではなく1.0e-1と書かないとPythonで読んだときにfloat型にならない.|
+|How to test if object is a pathlib path?|[URL](https://stackoverflow.com/questions/58647584/how-to-test-if-object-is-a-pathlib-path)|Read|`isinstance(var, object)`で判別する|
+|Memory error while reading a large .h5 file|[URL](https://stackoverflow.com/questions/59018887/memory-error-while-reading-a-large-h5-file)|Read|h5pyによる大規模データ読み込みに関するtips.|
 <br>
 
 #### GitHub
@@ -233,6 +259,11 @@ cd /Volumes/GoogleDrive/My\ Drive/colab_notebooks/kaggle/open-problems-multimoda
 #### Kaggle (Notebooks)
 |name|url|status|comment|
 |----|----|----|----|
+|MSCI EDA which makes sense ⭐️⭐️⭐️⭐️⭐️|[URL](https://www.kaggle.com/code/ambrosm/msci-eda-which-makes-sense/notebook)|Read|EDAとして優秀か.|
+|MSCI CITEseq Keras Quickstart|[URL](https://www.kaggle.com/code/ambrosm/msci-citeseq-keras-quickstart/notebook)|Read|Cite側のベースラインとして採用.<br>ただし実装はPyTorchに変更.|
+|Multiome w/ Sparse M + tSVD = 32|[URL](https://www.kaggle.com/code/jsmithperera/multiome-w-sparse-m-tsvd-32/notebook?scriptVersionId=105013007)|Keep|Multiome側のsubmission.csvを借用しCite側ベースラインのsubmission.csvにconcatenate.|
+|Querying specific subsets of the data without load|[URL](https://www.kaggle.com/code/alekeuro/querying-specific-subsets-of-the-data-without-load/notebook)|Read|h5ファイルのサブセットのみを読み込むクラスが紹介されている.|
+|There are 35 features in Multiome data constant 0|[URL](https://www.kaggle.com/code/takanashihumbert/there-are-35-features-in-multiome-data-constant-0/notebook)|Keep|trainとtestそれぞれで全行0値になるカラムを抽出している. <br>データ読み込みにはpandas.read_hdf()のstart, stop引数をうまく使っている.|
 <br>
 
 #### Kaggle (Datasets)
@@ -243,6 +274,9 @@ cd /Volumes/GoogleDrive/My\ Drive/colab_notebooks/kaggle/open-problems-multimoda
 #### Kaggle (Discussion)
 |name|url|status|comment|
 |----|----|----|----|
+|How to handle huge H5 files?|[URL](https://www.kaggle.com/competitions/open-problems-multimodal/discussion/346045)|Read|h5ファイルのサブセットのみを読み込む[Notebook](https://www.kaggle.com/code/alekeuro/querying-specific-subsets-of-the-data-without-load/notebook)が紹介されている.|
+|There are 35 features in Multiome data constant 0|[URL](https://www.kaggle.com/competitions/open-problems-multimodal/discussion/350514)|Read|train-test全行で0値になるカラムは無し, とのこと.|
+|Multiome Shapes and scoring|[URL](https://www.kaggle.com/competitions/open-problems-multimodal/discussion/353523)|Read|CiteとMultiomeそれぞれのshapeとsizeを検討し, <br>MultiomeのsizeがCiteのそれより大きいことを示した.|
 <br>
 
 
@@ -250,7 +284,7 @@ cd /Volumes/GoogleDrive/My\ Drive/colab_notebooks/kaggle/open-problems-multimoda
 ***
 ## Diary
 
-#### 2022-9-30
+#### 2022-09-30
 According to [this notebook](https://www.kaggle.com/code/takanashihumbert/there-are-35-features-in-multiome-data-constant-0/notebook), constant columns in multiome train are:
 ```python
 const_cols_train = set(['chr10:41857982-41858833', 'chr10:41879051-41879911', 'chr11:1946784-1947675', 'chr13:65965314-65966055', 'chr21:21146641-21147535', 'chr2:174378385-174378803', 'chr3:56842415-56843062', 'chr4:131727166-131728039', 'chr9:117692728-117693552', 'chr9:35269996-35270417'])
@@ -271,6 +305,16 @@ This means there is no column that can be dropped because of its consistency acr
 
 #### 2022-10-05
 [Notebook](https://github.com/riow1983/open-problems-multimodal/blob/main/notebooks/eda-to-see-the-sampling-result-of-multiome.ipynb)にてMultiomeのevaluationに含まれるcell_idを確認. (ちなみにサンプリング率は約10%だった.)
+<br>
+<br>
+<br>
+
+#### 2022-10-06
+[2022-09-30](#2022-09-30)で取り上げた[notebook](https://www.kaggle.com/code/takanashihumbert/there-are-35-features-in-multiome-data-constant-0/notebook)は, <br>
+(誤) train-test全行で定数となっているカラムは無い<br>
+と言っているのではなく,<br>
+(正) train-test全行で**0値**定数となっているカラムは無い<br>
+と言っていただけだった. したがって, train-test全行で定数となっているカラムは存在しているかも知れない. 要確認.
 <br>
 <br>
 <br>
