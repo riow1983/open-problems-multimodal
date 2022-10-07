@@ -14,6 +14,7 @@ import tables
 import psutil
 import time
 import gc
+import pathlib
 
 class DataReader:
     """
@@ -135,6 +136,25 @@ class DataReader:
             row_sample_idx = np.random.choice(N_rows, size = row_sample, replace = False)
             row_sample_idx = sorted(list(row_sample_idx))
             rows = [row.decode() for row in f[self.prefix]['axis1'][row_sample_idx]]
+        elif isinstance(row_sample, pathlib.PosixPath):
+            rf = pd.read_csv(row_sample)
+            cell_ids = rf['cell_id'].unique()
+            N_rows = f[self.prefix]['axis1'].shape[0]
+            row_sample_idx = np.arange(N_rows)
+            rows = [row.decode() for row in f[self.prefix]['axis1'][:] if row.decode() in cell_ids]
+        elif type(row_sample) == list:
+            if np.max(row_sample) > 1.0: raise ValueError('Max of row_sample must be less than 1.0!')
+            if np.min(row_sample) < 0.0: raise ValueError('Min of row_sample must be greater than or equal to 0.0!')
+            N_rows = f[self.prefix]['axis1'].shape[0]
+            if len(row_sample) != 2: 
+                raise ValueError('row_sample must contain two elements!')
+            else:
+                if row_sample[1] < row_sample[0]: raise ValueError('The second element of row_sample must be larger than the first element of row_sample!')
+            row_sample_idx = np.arange(np.floor(N_rows*row_sample[0]).astype(int), np.floor(N_rows*row_sample[1]).astype(int))
+            rows = [row.decode() for row in f[self.prefix]['axis1'][row_sample_idx]]
+        if len(rows)==0: raise ValueError('rows contains nothing!')
+        print('rows[:5]:\n', rows[:5])
+            
         #### RIOWRIOW
         rows = pd.DataFrame(rows, columns = ['cell_id']).reset_index().rename(columns = {'index':'index_col'})
         rows = pd.merge(query_df[['cell_id']], rows, on = 'cell_id').sort_values(by = 'index_col')

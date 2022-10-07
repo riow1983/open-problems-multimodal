@@ -2,7 +2,8 @@ comp_name = "open-problems-multimodal"
 dtype = 'multiome'
 nb_name = f'localsrc002-{dtype}-cv'
 col_sample = None
-row_sample = 1000
+row_sample = [0.0, 0.25]
+use_eval = False
 N_SPLITS = 3
 import numpy as np
 np.random.seed(42)
@@ -62,6 +63,9 @@ FP_MULTIOME_TRAIN_TARGETS = DATA_DIR / "train_multi_targets.h5"
 FP_MULTIOME_TEST_INPUTS = DATA_DIR / "test_multi_inputs.h5"
 FP_SUBMISSION = DATA_DIR / "sample_submission.csv"
 FP_EVALUATION_IDS = DATA_DIR / "evaluation_ids.csv"
+
+if use_eval:
+    row_sample = FP_EVALUATION_IDS
 
 if dtype == 'cite':
     PATH_TO_X = FP_CITE_TRAIN_INPUTS
@@ -135,15 +139,16 @@ print('''
 metadata_df = pd.read_csv(FP_CELL_METADATA, index_col='cell_id')
 metadata_df = metadata_df[metadata_df.technology==dtype]
 
-cell_index = Xt.index
+cell_index = X.index
 meta = metadata_df.reindex(cell_index)
+print('meta.shape: ', meta.shape)
 
 
 # Read Y
 Y = pd.read_hdf(PATH_TO_Y)
-print(Y.shape)
+print('Y.shape before sampling: ', Y.shape)
 Y = Y.iloc[row_sample_idx, :]
-print(Y.shape)
+print('Y.shape after sampling: ', Y.shape)
 y_columns = list(Y.columns)
 Y = Y.values
 
@@ -158,7 +163,9 @@ kf = GroupKFold(n_splits=N_SPLITS)
 X.reset_index(inplace=True)
 Y = pd.DataFrame(Y)
 X['fold'] = -1
+print('X.shape before concatenating: ', X.shape)
 X = pd.concat([X, Y], axis=1)
+print('X.shape after concatenating: ', X.shape)
 del Y; gc.collect()
 
 for n, (train_index, val_index) in enumerate(kf.split(X, groups=meta.donor)):
@@ -173,5 +180,11 @@ print('''
 #               Export Datasets                  #
 ##################################################
 ''')
-X.to_hdf(OUTPUT_DIR / f'X_{dtype}_rs{row_sample}_fold.h5', key='X')
-Xt.to_hdf(OUTPUT_DIR / f'Xt_{dtype}_rs{row_sample}_fold.h5', key='Xt')
+if use_eval:
+    row_sample = '_' + row_sample.name.split('.')[0]
+if type(row_sample)==list:
+    X.to_hdf(OUTPUT_DIR / f'X_{dtype}_sb{row_sample[1]}_fold.h5', key='X')
+    Xt.to_hdf(OUTPUT_DIR / f'Xt_{dtype}_sb{row_sample[1]}_fold.h5', key='Xt')
+else:
+    X.to_hdf(OUTPUT_DIR / f'X_{dtype}_rs{row_sample}_fold.h5', key='X')
+    Xt.to_hdf(OUTPUT_DIR / f'Xt_{dtype}_rs{row_sample}_fold.h5', key='Xt')
