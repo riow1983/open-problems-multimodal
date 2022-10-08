@@ -31,12 +31,12 @@ class DataReader:
     dr.query_data(donor_id = 2) --> returns all data available from donor = 31800. 
     The mapping between donor and donor_id is given below:
     
-    donor | donor_id
-    ----------------
-    13176 | 1
-    31800 | 2
-    32606 | 3
-    27678 | 4
+    donor | donor_id | public test |
+    ------------------------
+    13176 | 1 | 0
+    31800 | 2 | 0
+    32606 | 3 | 0
+    27678 | 4 | 1
     
     Note: the donor_id identifier is set to 4 for donor 27678 (instead of 2) in order to be in agreement with
     Data documentation provided by the organizers (donor 27678 is informally called "Donor 4" in the Data tab 
@@ -53,10 +53,8 @@ class DataReader:
         self.add_donor_id(self.md)
         
     def add_donor_id(self, df):
-
-        donor_dict = {13176:1, 31800:2,32606:3,27678:4}
-        df['donor_id'] = df.donor.map(donor_dict)
-        
+        donor_dict = {13176:1, 31800:2, 32606:3, 27678:4}
+        df['donor_id'] = df['donor'].map(donor_dict)
         
     def get_query_metadata(self, **kwargs):
         """
@@ -65,7 +63,6 @@ class DataReader:
         qmd = self.md.copy()
         for arg in kwargs:
             qmd = qmd.loc[qmd[arg] == kwargs[arg]].copy()
-            
         return qmd
     
     @property
@@ -145,17 +142,40 @@ class DataReader:
         elif type(row_sample) == list:
             if np.max(row_sample) > 1.0: raise ValueError('Max of row_sample must be less than 1.0!')
             if np.min(row_sample) < 0.0: raise ValueError('Min of row_sample must be greater than or equal to 0.0!')
+            cell_ids = query_df['cell_id'].unique()
             N_rows = f[self.prefix]['axis1'].shape[0]
             if len(row_sample) != 2: 
                 raise ValueError('row_sample must contain two elements!')
             else:
                 if row_sample[1] < row_sample[0]: raise ValueError('The second element of row_sample must be larger than the first element of row_sample!')
-            row_sample_idx = np.arange(np.floor(N_rows*row_sample[0]).astype(int), np.floor(N_rows*row_sample[1]).astype(int))
+            # row_sample_idx = np.arange(np.floor(N_rows*row_sample[0]).astype(int), np.floor(N_rows*row_sample[1]).astype(int))
+            
+            # Subset 1
+            # Drop row indices of which row's cell_id does not match with cell_ids which is specified by donor_id in **kwargs 
+            mask = np.array([1 if row.decode() in cell_ids else 0 for row in f[self.prefix]['axis1'][:]]).astype(bool)
+            row_sample_idx = np.arange(N_rows)[mask]
+            
+            # Subset 2
+            # Drop row indices other than the interval of row_sample[0] and row_sample[1]
+            n_rows = len(row_sample_idx)
+            start, end = np.floor(n_rows * row_sample[0]).astype(int), np.floor(n_rows * row_sample[1]).astype(int)
+            row_sample_idx = row_sample_idx[start:end]
             rows = [row.decode() for row in f[self.prefix]['axis1'][row_sample_idx]]
+            
+        # elif type(row_sample) == list:
+        #     if np.max(row_sample) > 1.0: raise ValueError('Max of row_sample must be less than 1.0!')
+        #     if np.min(row_sample) < 0.0: raise ValueError('Min of row_sample must be greater than or equal to 0.0!')
+        #     N_rows = f[self.prefix]['axis1'].shape[0]
+        #     if len(row_sample) != 2: 
+        #         raise ValueError('row_sample must contain two elements!')
+        #     else:
+        #         if row_sample[1] < row_sample[0]: raise ValueError('The second element of row_sample must be larger than the first element of row_sample!')
+        #     row_sample_idx = np.arange(np.floor(N_rows*row_sample[0]).astype(int), np.floor(N_rows*row_sample[1]).astype(int))
+        #     rows = [row.decode() for row in f[self.prefix]['axis1'][row_sample_idx]]
         if len(rows)==0: raise ValueError('rows contains nothing!')
         print('rows[:5]:\n', rows[:5])
-            
         #### RIOWRIOW
+        
         rows = pd.DataFrame(rows, columns = ['cell_id']).reset_index().rename(columns = {'index':'index_col'})
         rows = pd.merge(query_df[['cell_id']], rows, on = 'cell_id').sort_values(by = 'index_col')
         

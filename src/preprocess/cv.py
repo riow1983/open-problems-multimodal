@@ -3,10 +3,14 @@ dtype = 'multiome'
 nb_name = f'localsrc002-{dtype}-cv'
 col_sample = None
 row_sample = [0.0, 0.25]
-use_eval = False
+use_eval = False # Set False permanently; evaluation_ids.csv does not contain cell_ids in train set
 N_SPLITS = 3
+debug = True
 import numpy as np
 np.random.seed(42)
+
+if debug:
+    row_sample = [i*0.001 for i in row_sample]
     
 
 import sys
@@ -91,8 +95,17 @@ print(
 drx = DataReader(data_dir = PATH_TO_X.parent,
                  filename = PATH_TO_X.name,
                  metadata_file_name = 'metadata.csv')
-X, row_sample_idx = drx.query_data(col_sample = col_sample, row_sample = row_sample)
-del drx; gc.collect()
+
+# Iterate over all donors and get portion of each donor,
+# using row_sample[0] as start and row_sample[1] as end for each donor's rows
+Xs = []
+row_sample_idxs =np.array([])
+for i in range(1,4):
+    X, row_sample_idx = drx.query_data(col_sample = col_sample, row_sample = row_sample, donor_id=i)
+    Xs.append(X)
+    row_sample_idxs = np.append(row_sample_idxs, row_sample_idx)
+X = pd.concat(Xs, axis=0, ignore_index=False)
+del Xs, row_sample_idx, drx; gc.collect()
 # len_X = len(X)
 
 
@@ -139,15 +152,18 @@ print('''
 metadata_df = pd.read_csv(FP_CELL_METADATA, index_col='cell_id')
 metadata_df = metadata_df[metadata_df.technology==dtype]
 
+print(X.head())
 cell_index = X.index
+# cell_index = X['cell_id'].unique()
 meta = metadata_df.reindex(cell_index)
 print('meta.shape: ', meta.shape)
+print(meta.head())
 
 
 # Read Y
 Y = pd.read_hdf(PATH_TO_Y)
 print('Y.shape before sampling: ', Y.shape)
-Y = Y.iloc[row_sample_idx, :]
+Y = Y.iloc[row_sample_idxs, :]
 print('Y.shape after sampling: ', Y.shape)
 y_columns = list(Y.columns)
 Y = Y.values
