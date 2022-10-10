@@ -5,7 +5,7 @@ col_sample = None
 row_sample = [0.0, 0.25]
 use_eval = False # Set False permanently; evaluation_ids.csv does not contain cell_ids in train set
 N_SPLITS = 3
-debug = True
+debug = False
 import numpy as np
 np.random.seed(42)
 
@@ -47,15 +47,17 @@ import h5py
 import hdf5plugin
 from sklearn.model_selection import GroupKFold
 from datareader import *
+import warnings
+warnings.filterwarnings('ignore',category=pd.io.pytables.PerformanceWarning)
 
 if "google.colab" in sys.modules:
     python_version = 7
 elif KAGGLE_ENV:
     python_version = 7
 else:
-    python_version = 10
+    python_version = 9
 if not os.path.exists(f'/opt/conda/lib/python3.{str(python_version)}/site-packages/tables'):
-    os.system('pip install --quiet tables')
+    os.system('pip install --quiet tables --install-option="--hdf5=/home/user/hdf5.1.10"')
 
 DATA_DIR = INPUT_DIR / comp_name
 FP_CELL_METADATA = DATA_DIR / "metadata.csv"

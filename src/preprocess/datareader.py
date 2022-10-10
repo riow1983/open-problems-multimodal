@@ -1,7 +1,7 @@
 # Credit to https://www.kaggle.com/code/alekeuro/querying-specific-subsets-of-the-data-without-load/notebook
 import os
-if not os.path.exists('/opt/conda/lib/python3.10/site-packages/tables'):
-    os.system('pip install --quiet tables')
+if not os.path.exists('/opt/conda/lib/python3.9/site-packages/tables'):
+    os.system('pip install --quiet tables --install-option="--hdf5=/home/user/hdf5.1.10"')
 os.system('pip install hdf5plugin')
 
 import pandas as pd
