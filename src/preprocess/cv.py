@@ -5,7 +5,7 @@ col_sample = None
 row_sample = [0.0, 0.25]
 use_eval = False # Set False permanently; evaluation_ids.csv does not contain cell_ids in train set
 N_SPLITS = 3
-debug = False
+debug = True
 import numpy as np
 np.random.seed(42)
 
@@ -47,8 +47,8 @@ import h5py
 import hdf5plugin
 from sklearn.model_selection import GroupKFold
 from datareader import *
-import warnings
-warnings.filterwarnings('ignore',category=pd.io.pytables.PerformanceWarning)
+# import warnings
+# warnings.filterwarnings('ignore',category=pd.io.pytables.PerformanceWarning)
 
 if "google.colab" in sys.modules:
     python_version = 7
@@ -198,11 +198,17 @@ print('''
 #               Export Datasets                  #
 ##################################################
 ''')
+# print(X.head())
+# print(Xt.head())
+print(X.iloc[:, X.columns.isnull()].head())
+print(Xt.iloc[:, Xt.columns.isnull()].head())
+# X = X.applymap(str)
+# Xt = Xt.applymap(str)
 if use_eval:
     row_sample = '_' + row_sample.name.split('.')[0]
 if type(row_sample)==list:
-    X.to_hdf(OUTPUT_DIR / f'X_{dtype}_sb{row_sample[1]}_fold.h5', key='X')
-    Xt.to_hdf(OUTPUT_DIR / f'Xt_{dtype}_sb{row_sample[1]}_fold.h5', key='Xt')
+    X.to_hdf(OUTPUT_DIR / f'X_{dtype}_sb{row_sample[1]}_fold.h5', key='X', mode='w')
+    Xt.to_hdf(OUTPUT_DIR / f'Xt_{dtype}_sb{row_sample[1]}_fold.h5', key='Xt', mode='w')
 else:
-    X.to_hdf(OUTPUT_DIR / f'X_{dtype}_rs{row_sample}_fold.h5', key='X')
-    Xt.to_hdf(OUTPUT_DIR / f'Xt_{dtype}_rs{row_sample}_fold.h5', key='Xt')
+    X.to_hdf(OUTPUT_DIR / f'X_{dtype}_rs{row_sample}_fold.h5', key='X', mode='w')
+    Xt.to_hdf(OUTPUT_DIR / f'Xt_{dtype}_rs{row_sample}_fold.h5', key='Xt', mode='w')
